@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="PasswordVault.Views.VaultPage"
+    Title="Password Vault">
+
+    <Grid
+        Padding="20"
+        RowDefinitions="Auto, Auto, *, Auto"
+        RowSpacing="15">
+
+        <Label
+            Grid.Row="0"
+            Text="Password Vault"
+            FontSize="28"
+            FontAttributes="Bold" />
+
+        <SearchBar
+            Grid.Row="1"
+            Placeholder="Поиск..." />
+
+        <CollectionView
+            x:Name="PasswordList"
+            Grid.Row="2">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+
+                    <Border
+                        Padding="15"
+                        Margin="0,5"
+                        StrokeThickness="1">
+
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Tapped="OnPasswordTapped" />
+                        </Border.GestureRecognizers>
+
+                        <VerticalStackLayout>
+
+                            <Label
+                                Text="{Binding Title}"
+                                FontSize="18"
+                                FontAttributes="Bold" />
+
+                            <Label
+                                Text="{Binding Website}"
+                                FontSize="14" />
+
+                            <Label
+                                Text="{Binding Username}"
+                                FontSize="14" />
+
+                        </VerticalStackLayout>
+
+                    </Border>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+        <Button
+            Grid.Row="3"
+            Text="+ Добавить пароль"
+            Clicked="OnAddPasswordClicked"/>
+
+    </Grid>
+
+</ContentPage>
