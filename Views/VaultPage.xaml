@@ -18,8 +18,10 @@
             FontAttributes="Bold" />
 
         <SearchBar
+            x:Name="SearchBar"
             Grid.Row="1"
-            Placeholder="Поиск..." />
+            Placeholder="Поиск..."
+            TextChanged="OnSearchTextChanged" />
 
         <CollectionView
             x:Name="PasswordList"

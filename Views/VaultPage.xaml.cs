@@ -6,6 +6,7 @@ namespace PasswordVault.Views;
 public partial class VaultPage : ContentPage
 {
     private readonly VaultService _vaultService;
+    private List<PasswordEntry> _allEntries = new();
 
     public VaultPage(VaultService vaultService)
     {
@@ -18,8 +19,29 @@ public partial class VaultPage : ContentPage
     {
         base.OnAppearing();
 
-        PasswordList.ItemsSource =
-            await _vaultService.GetEntriesAsync();
+        _allEntries = await _vaultService.GetEntriesAsync();
+
+        PasswordList.ItemsSource = _allEntries;
+    }
+
+    private void OnSearchTextChanged(object sended, TextChangedEventArgs e)
+    {
+        string searchText = e.NewTextValue?.Trim() ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            PasswordList.ItemsSource = _allEntries;
+            return;
+        }
+
+        var filteredEntries = _allEntries
+            .Where(entry =>
+                entry.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                entry.Username.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                entry.Website.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        PasswordList.ItemsSource = filteredEntries;
     }
 
     private async void OnAddPasswordClicked(object sender, EventArgs e)
