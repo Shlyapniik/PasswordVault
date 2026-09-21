@@ -64,7 +64,7 @@ public partial class PasswordDetailsPage : ContentPage
         if (_entry == null)
             return;
 
-        bool confirmed = await DisplayAlert(
+        bool confirmed = await DisplayAlertAsync(
             "Удаление",
             $"Удалить запись «{_entry.Title}»?",
             "Удалить",

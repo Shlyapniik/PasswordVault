@@ -36,7 +36,7 @@ public partial class EditPasswordPage : ContentPage
 
         if (string.IsNullOrWhiteSpace(TitleEntry.Text))
         {
-            await DisplayAlert(
+            await DisplayAlertAsync(
                 "Ошибка",
                 "Введите название записи.",
                 "OK");
@@ -46,7 +46,7 @@ public partial class EditPasswordPage : ContentPage
 
         if (string.IsNullOrWhiteSpace(PasswordEntry.Text))
         {
-            await DisplayAlert(
+            await DisplayAlertAsync(
                 "Ошибка",
                 "Введите пароль.",
                 "OK");

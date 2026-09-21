@@ -16,7 +16,7 @@ public partial class AddPasswordPage : ContentPage
         _passwordGenerator = passwordGenerator;
     }
 
-    private void OnGeneratePasswordClicked(object sender, EventArgs e)
+    private async void OnGeneratePasswordClicked(object sender, EventArgs e)
     {
         int length = (int)PasswordLengthStepper.Value;
 
@@ -36,7 +36,7 @@ public partial class AddPasswordPage : ContentPage
         }
         catch (ArgumentException ex)
         {
-            DisplayAlert(
+            await DisplayAlertAsync(
                 "Ошибка",
                 ex.Message,
                 "ОК");
@@ -52,7 +52,7 @@ public partial class AddPasswordPage : ContentPage
     {
         if (string.IsNullOrWhiteSpace(TitleEntry.Text))
         {
-            await DisplayAlert(
+            await DisplayAlertAsync(
                 "Ошибка",
                 "Введите название записи.",
                 "OK");
@@ -62,7 +62,7 @@ public partial class AddPasswordPage : ContentPage
 
         if (string.IsNullOrWhiteSpace(PasswordEntry.Text))
         {
-            await DisplayAlert(
+            await DisplayAlertAsync(
                 "Ошибка",
                 "Введите пароль.",
                 "OK");
