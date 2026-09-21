@@ -6,12 +6,19 @@ namespace PasswordVault.Views;
 public partial class AddPasswordPage : ContentPage
 {
     private readonly VaultService _vaultService;
+    private readonly PasswordGeneratorService _passwordGenerator;
 
-    public AddPasswordPage(VaultService vaultService)
+    public AddPasswordPage(VaultService vaultService, PasswordGeneratorService passwordGenerator)
     {
         InitializeComponent();
 
         _vaultService = vaultService;
+        _passwordGenerator = passwordGenerator;
+    }
+
+    private void OnGeneratePasswordClicked(object sender, EventArgs e)
+    {
+        PasswordEntry.Text = _passwordGenerator.Generate();
     }
 
     private async void OnSaveClicked(object sender, EventArgs e)

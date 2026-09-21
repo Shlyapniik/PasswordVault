@@ -18,6 +18,7 @@ namespace PasswordVault
                 });
             builder.Services.AddSingleton<VaultService>();
             builder.Services.AddSingleton<DatabaseService>();
+            builder.Services.AddSingleton<PasswordGeneratorService>();
 
 #if DEBUG
             builder.Logging.AddDebug();
