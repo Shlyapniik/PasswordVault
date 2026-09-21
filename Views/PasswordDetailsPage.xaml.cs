@@ -59,6 +59,19 @@ public partial class PasswordDetailsPage : ContentPage
         await Navigation.PushAsync(page);
     }
 
+    private async void OnCopyPasswordClicked(object sender, EventArgs e)
+    {
+        if( _entry == null) 
+            return;
+
+        await Clipboard.SetTextAsync(_entry.Password);
+
+        await DisplayAlertAsync(
+            "Готово",
+            "Пароль скопирован в буфер обмена.",
+            "ОК");
+    }
+
     private async void OnDeleteClicked(object sender, EventArgs e)
     {
         if (_entry == null)
