@@ -18,7 +18,34 @@ public partial class AddPasswordPage : ContentPage
 
     private void OnGeneratePasswordClicked(object sender, EventArgs e)
     {
-        PasswordEntry.Text = _passwordGenerator.Generate();
+        int length = (int)PasswordLengthStepper.Value;
+
+        bool useLowercase = UseLowercaseCheckBox.IsChecked;
+        bool useUppercase = UseUppercaseCheckBox.IsChecked;
+        bool useDigits = UseDigitsCheckBox.IsChecked;
+        bool useSymbols = UseSymbolsCheckBox.IsChecked;
+
+        try
+        {
+            PasswordEntry.Text = _passwordGenerator.Generate(
+                length,
+                useLowercase,
+                useUppercase,
+                useDigits,
+                useSymbols);
+        }
+        catch (ArgumentException ex)
+        {
+            DisplayAlert(
+                "Ошибка",
+                ex.Message,
+                "ОК");
+        }
+    }
+
+    private void OnPasswordLengthChanged(object sender, ValueChangedEventArgs e)
+    {
+        PasswordLengthLabel.Text = ((int)e.NewValue).ToString();
     }
 
     private async void OnSaveClicked(object sender, EventArgs e)
