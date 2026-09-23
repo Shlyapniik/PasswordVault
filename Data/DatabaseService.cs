@@ -21,7 +21,50 @@ public class DatabaseService
 
     private async Task InitializeAsync()
     {
+        await _database.CreateTableAsync<VaultMetadata>();
+
+        await MigratePasswordEntryTableAsync();
+
         await _database.CreateTableAsync<PasswordEntry>();
+    }
+
+    private async Task MigratePasswordEntryTableAsync()
+    {
+        var columns = await _database.QueryAsync<TableColumnInfo>(
+            "PRAGMA table_info(PasswordEntry)");
+
+        if (columns.Count == 0)
+            return;
+
+        bool needsMigration = columns.Any(column =>
+            column.Name.Equals("Username", StringComparison.OrdinalIgnoreCase) ||
+            column.Name.Equals("Password", StringComparison.OrdinalIgnoreCase) ||
+            column.Name.Equals("Website", StringComparison.OrdinalIgnoreCase) ||
+            column.Name.Equals("Notes", StringComparison.OrdinalIgnoreCase));
+
+        if (!needsMigration)
+            return;
+
+        await _database.ExecuteAsync(
+            "ALTER TABLE PasswordEntry RENAME TO PasswordEntry_Legacy");
+
+        await _database.CreateTableAsync<PasswordEntry>();
+
+        await _database.ExecuteAsync(
+            """
+        INSERT INTO PasswordEntry (Id, Title, EncryptedData)
+        SELECT Id, Title, EncryptedData
+        FROM PasswordEntry_Legacy
+        """);
+
+        await _database.ExecuteAsync(
+            "DROP TABLE PasswordEntry_Legacy");
+    }
+
+    private class TableColumnInfo
+    {
+        [Column("name")]
+        public string Name { get; set; } = string.Empty;
     }
 
     public async Task<List<PasswordEntry>> GetEntriesAsync()
@@ -52,5 +95,21 @@ public class DatabaseService
         await _initializationTask;
 
         await _database.DeleteAsync(entry);
+    }
+
+    public async Task<VaultMetadata?> GetVaultMetadataAsync()
+    {
+        await _initializationTask;
+
+        return await _database
+            .Table<VaultMetadata>()
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task SaveVaultMetadataAsync(VaultMetadata metadata)
+    {
+        await _initializationTask;
+
+        await _database.InsertAsync(metadata);
     }
 }

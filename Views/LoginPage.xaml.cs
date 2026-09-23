@@ -1,14 +1,31 @@
 #if ANDROID
 using Android.Views.InputMethods;
+using PasswordVault.Security;
+using PasswordVault.Services;
 #endif
+using PasswordVault.Models;
+using PasswordVault.Security;
+using PasswordVault.Services;
 
 namespace PasswordVault.Views;
 
 public partial class LoginPage : ContentPage
 {
-	public LoginPage()
+
+    private readonly VaultService _vaultService;
+    private readonly VaultSecurityService _vaultSecurity;
+    private readonly VaultSetupService _vaultSetup;
+
+	public LoginPage(
+        VaultService vaultService,
+        VaultSecurityService vaultSecurity,
+        VaultSetupService vaultSetup)
 	{
 		InitializeComponent();
+
+        _vaultService = vaultService;
+        _vaultSecurity = vaultSecurity;
+        _vaultSetup = vaultSetup;
 	}
 
 #if ANDROID
@@ -45,11 +62,35 @@ public partial class LoginPage : ContentPage
 			return;
 		}
 
+        VaultMetadata? metadata = await _vaultService.GetVaultMetadataAsync();
+
+        if (metadata == null)
+        {
+            metadata = _vaultSetup.CreateMetadata(password);
+
+            await _vaultService.SaveVaultMetadataAsync(metadata);
+        }
+
+        bool unlocked = _vaultSecurity.Unlock(
+            password,
+            metadata.Salt,
+            metadata.VerificationData);
+
 #if ANDROID
 		HideKeyboard();
 #else
 		MasterPasswordEntry.Unfocus();
 #endif
+
+        if (!unlocked)
+        {
+            await DisplayAlertAsync(
+                "Ошибка",
+                "Неверный мастер-пароль.",
+                "ОК");
+
+            return;
+        }
 
         await Shell.Current.GoToAsync(nameof(VaultPage));
     }

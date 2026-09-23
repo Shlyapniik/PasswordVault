@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using PasswordVault.Services;
 using PasswordVault.Data;
+using PasswordVault.Security;
 
 namespace PasswordVault
 {
@@ -19,6 +20,12 @@ namespace PasswordVault
             builder.Services.AddSingleton<VaultService>();
             builder.Services.AddSingleton<DatabaseService>();
             builder.Services.AddSingleton<PasswordGeneratorService>();
+
+            builder.Services.AddSingleton<KeyDerivationService>();
+            builder.Services.AddSingleton<EncryptionService>();
+            builder.Services.AddSingleton<VaultSecurityService>();
+            builder.Services.AddSingleton<VaultSetupService>();
+            builder.Services.AddSingleton<PasswordDataSerializer>();
 
 #if DEBUG
             builder.Logging.AddDebug();
