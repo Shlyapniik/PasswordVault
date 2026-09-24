@@ -31,6 +31,12 @@ public class VaultSecurityService
         byte[] salt,
         byte[] verificationData)
     {
+        if (string.IsNullOrEmpty(masterPassword))
+            return false;
+
+        if (salt.Length == 0 || verificationData.Length == 0)
+            return false;
+
         byte[] key = _keyDerivationService.DeriveKey(
             masterPassword,
             salt);
@@ -70,26 +76,31 @@ public class VaultSecurityService
         }
     }
 
-    public byte[] Encrypt(string plaintext)
+    public void EnsureUnlocked()
     {
         if (_encryptionKey == null)
+        {
             throw new InvalidOperationException(
                 "Хранилище заблокировано.");
+        }
+    }
+
+    public byte[] Encrypt(string plaintext)
+    {
+        EnsureUnlocked();
 
         return _encryptionService.Encrypt(
             plaintext,
-            _encryptionKey);
+            _encryptionKey!);
     }
 
     public string Decrypt(byte[] encryptedData)
     {
-        if (_encryptionKey == null)
-            throw new InvalidOperationException(
-                "Хранилище заблокировано.");
+        EnsureUnlocked();
 
         return _encryptionService.Decrypt(
             encryptedData,
-            _encryptionKey);
+            _encryptionKey!);
     }
 
     public byte[] EncryptPasswordData(

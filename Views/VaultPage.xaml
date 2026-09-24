@@ -69,6 +69,10 @@
             Text="+ Добавить пароль"
             Clicked="OnAddPasswordClicked"/>
 
+        <Button
+            Text="Заблокировать"
+            Clicked="OnLockClicked"/>
+
     </Grid>
 
 </ContentPage>

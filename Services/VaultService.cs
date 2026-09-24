@@ -1,6 +1,7 @@
 ﻿using PasswordVault.Data;
 using PasswordVault.Models;
 using PasswordVault.Security;
+using System.Security.Cryptography;
 
 namespace PasswordVault.Services;
 
@@ -26,14 +27,29 @@ public class VaultService
             if (entry.EncryptedData.Length == 0)
                 continue;
 
-            var decryptedData =
-                _vaultSecurity.DecryptPasswordData(
-                    entry.EncryptedData);
+            try
+            {
+                var decryptedData =
+                    _vaultSecurity.DecryptPasswordData(
+                        entry.EncryptedData);
 
-            entry.Username = decryptedData.Username;
-            entry.Password = decryptedData.Password;
-            entry.Website = decryptedData.Website;
-            entry.Notes = decryptedData.Notes;
+                entry.Username = decryptedData.Username;
+                entry.Password = decryptedData.Password;
+                entry.Website = decryptedData.Website;
+                entry.Notes = decryptedData.Notes;
+            }
+            catch (CryptographicException)
+            {
+                entry.Username = string.Empty;
+                entry.Password = string.Empty;
+                entry.Website = string.Empty;
+                entry.Notes =
+                    "Не удалось расшифровать данные записи.";
+            }
+            catch (InvalidOperationException)
+            {
+                throw;
+            }
         }
 
         return entries;

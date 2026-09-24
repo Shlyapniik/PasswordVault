@@ -1,47 +1,85 @@
-﻿namespace PasswordVault.Services;
+﻿using System.Security.Cryptography;
+using System.Text;
+
+namespace PasswordVault.Services;
 
 public class PasswordGeneratorService
 {
-    private const string Lowercase = "abcdefghijklmnopqrstuvwxyz";
-    private const string Uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private const string Digits = "0123456789";
-    private const string Symbols = "!@#$%^&*()-_=+[]{}";
+    private const string Lowercase =
+        "abcdefghijklmnopqrstuvwxyz";
+
+    private const string Uppercase =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    private const string Digits =
+        "0123456789";
+
+    private const string Special =
+        "!@#$%^&*()-_=+";
 
     public string Generate(
-        int length = 16,
+        int length,
         bool useLowercase = true,
         bool useUppercase = true,
         bool useDigits = true,
-        bool useSymbols = true)
+        bool useSpecial = true)
     {
-        string characters = string.Empty;
+        var characterGroups = new List<string>();
 
         if (useLowercase)
-            characters += Lowercase;
+            characterGroups.Add(Lowercase);
 
         if (useUppercase)
-            characters += Uppercase;
+            characterGroups.Add(Uppercase);
 
         if (useDigits)
-            characters += Digits;
+            characterGroups.Add(Digits);
 
-        if (useSymbols)
-            characters += Symbols;
+        if (useSpecial)
+            characterGroups.Add(Special);
 
-        if (string.IsNullOrEmpty(characters))
+        if (characterGroups.Count == 0)
             throw new ArgumentException(
-                "Должен быть выбран хотя бы один тип символов.");
+                "Не выбрана ни одна группа символов.");
 
-        if (length < 4)
+        if (length < characterGroups.Count)
             throw new ArgumentException(
-                "Длина пароля должна быть не менее 4 символов.");
+                "Длина пароля слишком мала.");
 
-        var random = new Random();
+        var result = new List<char>(length);
 
-        return new string(
-            Enumerable
-                .Range(0, length)
-                .Select(_ => characters[random.Next(characters.Length)])
-                .ToArray());
+        foreach (var group in characterGroups)
+        {
+            int index = RandomNumberGenerator.GetInt32(
+                group.Length);
+
+            result.Add(group[index]);
+        }
+
+        string allCharacters =
+            string.Concat(characterGroups);
+
+        while (result.Count < length)
+        {
+            int index = RandomNumberGenerator.GetInt32(
+                allCharacters.Length);
+
+            result.Add(allCharacters[index]);
+        }
+
+        Shuffle(result);
+
+        return new string(result.ToArray());
+    }
+
+    private static void Shuffle(List<char> characters)
+    {
+        for (int i = characters.Count - 1; i > 0; i--)
+        {
+            int j = RandomNumberGenerator.GetInt32(i + 1);
+
+            (characters[i], characters[j]) =
+                (characters[j], characters[i]);
+        }
     }
 }

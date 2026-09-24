@@ -1,4 +1,5 @@
 using PasswordVault.Models;
+using PasswordVault.Security;
 using PasswordVault.Services;
 
 namespace PasswordVault.Views;
@@ -6,13 +7,17 @@ namespace PasswordVault.Views;
 public partial class VaultPage : ContentPage
 {
     private readonly VaultService _vaultService;
+    private readonly VaultSecurityService _vaultSecurity;
     private List<PasswordEntry> _allEntries = new();
 
-    public VaultPage(VaultService vaultService)
+    public VaultPage(
+        VaultService vaultService,
+        VaultSecurityService vaultSecurity)
     {
         InitializeComponent();
 
         _vaultService = vaultService;
+        _vaultSecurity = vaultSecurity;
     }
 
     protected override async void OnAppearing()
@@ -62,5 +67,14 @@ public partial class VaultPage : ContentPage
         page.LoadEntry(entry);
 
         await Navigation.PushAsync(page);
+    }
+
+    private async void OnLockClicked(
+        object sender,
+        EventArgs e)
+    {
+        _vaultSecurity.Lock();
+
+        await Shell.Current.Navigation.PopToRootAsync();
     }
 }
