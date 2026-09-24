@@ -4,7 +4,6 @@ using PasswordVault.Models;
 using PasswordVault.Security;
 using PasswordVault.Services;
 using System.Collections.ObjectModel;
-using static Android.Security.Identity.CredentialDataResult;
 
 namespace PasswordVault.ViewModels;
 

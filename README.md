@@ -116,7 +116,21 @@ Sensitive fields are no longer stored as individual SQLite columns. They are sto
 
 ## Screenshots
 
-Screenshots will be added here.
+### Login
+
+![Login](Screenshots/LoginPage.jpg)
+
+### Vault
+
+![Vault](Screenshots/VaultPage.jpg)
+
+### Password Details
+
+![Password Details](Screenshots/DetailsPage.jpg)
+
+### Password Generator
+
+![Password Generator](Screenshots/CreationPage.jpg)
 
 ## Platforms
 
