@@ -48,34 +48,17 @@ The resulting key is kept in memory only while the vault is unlocked.
 ### Encryption flow
 
 ```text
-┌──────────────────────┐
-│   Master Password    │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│ PBKDF2 + Random Salt │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│  32-byte AES Key     │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│       AES-GCM        │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│   Encrypted Payload  │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│        SQLite        │
-└──────────────────────┘
+Master Password
+       ↓
+PBKDF2 + Salt
+       ↓
+  32-byte Key
+       ↓
+    AES-GCM
+       ↓
+EncryptedData
+       ↓
+    SQLite
 ```
 
 ### Encrypted data
@@ -113,36 +96,6 @@ When the vault is locked, the encryption key held in memory is cleared.
 ## Architecture
 
 PasswordVault follows an MVVM-based architecture that separates UI, application logic, security and data access.
-
-```text
-┌────────────────────────────────────┐
-│          .NET MAUI Views            │
-│ Login / Vault / Add / Details / Edit│
-└──────────────────┬─────────────────┘
-                   │
-                   ▼
-┌────────────────────────────────────┐
-│            ViewModels               │
-│  Commands + Observable Properties   │
-└──────────────────┬─────────────────┘
-                   │
-                   ▼
-┌────────────────────────────────────┐
-│             Services               │
-│ VaultService / PasswordGenerator   │
-└──────────────┬─────────┬───────────┘
-               │         │
-               ▼         ▼
-┌──────────────────┐  ┌────────────────────┐
-│ Security Layer   │  │     Data Layer     │
-│ PBKDF2 / AES-GCM │  │  DatabaseService   │
-└──────────────────┘  └─────────┬──────────┘
-                                │
-                                ▼
-                         ┌─────────────┐
-                         │   SQLite    │
-                         └─────────────┘
-```
 
 ### Project structure
 
