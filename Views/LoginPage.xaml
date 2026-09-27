@@ -22,13 +22,13 @@
                 HorizontalOptions="Center" />
 
             <Entry
-                x:Name="MasterPasswordEntry"
                 Placeholder="Мастер-пароль"
-                IsPassword="True" />
+                IsPassword="True"
+                Text="{Binding MasterPassword}"/>
 
             <Button
                 Text="Разблокировать"
-                Clicked="OnUnlockClicked" />
+                Command="{Binding UnlockCommand}"/>
 
         </VerticalStackLayout>
     </ScrollView>

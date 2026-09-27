@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using PasswordVault.Models;
 using PasswordVault.Security;
 using PasswordVault.Services;
+using PasswordVault.Views;
 using System.Collections.ObjectModel;
 
 namespace PasswordVault.ViewModels;
@@ -11,6 +12,7 @@ public partial class VaultViewModel : ObservableObject
 {
     private readonly VaultService _vaultService;
     private readonly VaultSecurityService _vaultSecurity;
+    private readonly IServiceProvider _serviceProvider;
 
     private List<PasswordEntry> _allEntries = new();
 
@@ -22,10 +24,12 @@ public partial class VaultViewModel : ObservableObject
 
     public VaultViewModel(
         VaultService vaultService,
-        VaultSecurityService vaultSecurity)
+        VaultSecurityService vaultSecurity,
+        IServiceProvider serviceProvider)
     {
         _vaultService = vaultService;
         _vaultSecurity = vaultSecurity;
+        _serviceProvider = serviceProvider;
     }
 
     [RelayCommand]
@@ -58,9 +62,12 @@ public partial class VaultViewModel : ObservableObject
                     StringComparison.OrdinalIgnoreCase))
             .ToList();
 
-        Entries =
-            new ObservableCollection<PasswordEntry>(
-                filteredEntries);
+        Entries.Clear();
+
+        foreach (var entry in filteredEntries)
+        {
+            Entries.Add(entry);
+        }
     }
 
     [RelayCommand]
@@ -70,5 +77,26 @@ public partial class VaultViewModel : ObservableObject
 
         await Shell.Current.Navigation
             .PopToRootAsync();
+    }
+
+    [RelayCommand]
+    private async Task OpenEntryAsync(PasswordEntry? entry)
+    {
+        if (entry == null)
+            return;
+
+        var page =
+            _serviceProvider.GetRequiredService<PasswordDetailsPage>();
+
+        page.LoadEntry(entry);
+
+        await Shell.Current.Navigation.PushAsync(page);
+    }
+
+    [RelayCommand]
+    private async Task AddEntryAsync()
+    {
+        await Shell.Current.GoToAsync(
+            nameof(AddPasswordPage));
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using PasswordVault.Services;
 using PasswordVault.Data;
 using PasswordVault.Security;
+using PasswordVault.Services;
+using PasswordVault.ViewModels;
+using PasswordVault.Views;
 
 namespace PasswordVault
 {
@@ -26,6 +28,14 @@ namespace PasswordVault
             builder.Services.AddSingleton<VaultSecurityService>();
             builder.Services.AddSingleton<VaultSetupService>();
             builder.Services.AddSingleton<PasswordDataSerializer>();
+
+            builder.Services.AddSingleton<VaultViewModel>();
+            builder.Services.AddTransient<LoginViewModel>();
+            builder.Services.AddTransient<AddPasswordViewModel>();
+            builder.Services.AddTransient<PasswordDetailsViewModel>();
+            builder.Services.AddTransient<PasswordDetailsPage>();
+            builder.Services.AddTransient<EditPasswordViewModel>();
+            builder.Services.AddTransient<EditPasswordPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();

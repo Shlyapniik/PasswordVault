@@ -1,93 +1,30 @@
 using PasswordVault.Models;
-using PasswordVault.Services;
+using PasswordVault.ViewModels;
 
 namespace PasswordVault.Views;
 
 public partial class PasswordDetailsPage : ContentPage
 {
-    private readonly VaultService _vaultService;
+    private readonly PasswordDetailsViewModel _viewModel;
 
-    private PasswordEntry? _entry;
-
-    private bool _isPasswordVisible;
-
-    public PasswordDetailsPage(VaultService vaultService)
+    public PasswordDetailsPage(
+        PasswordDetailsViewModel viewModel)
     {
         InitializeComponent();
 
-        _vaultService = vaultService;
+        _viewModel = viewModel;
+        BindingContext = _viewModel;
     }
 
     public void LoadEntry(PasswordEntry entry)
     {
-        _entry = entry;
-
-        RefreshEntry();
+        _viewModel.LoadEntry(entry);
     }
 
-    public void RefreshEntry()
+    protected override void OnAppearing()
     {
-        if (_entry == null)
-            return;
+        base.OnAppearing();
 
-        TitleLabel.Text = _entry.Title;
-        UsernameEntry.Text = _entry.Username;
-        PasswordValueEntry.Text = _entry.Password;
-        WebsiteEntry.Text = _entry.Website;
-        NotesEditor.Text = _entry.Notes;
-    }
-
-    private void OnShowPasswordClicked(object sender, EventArgs e)
-    {
-        _isPasswordVisible = !_isPasswordVisible;
-
-        PasswordValueEntry.IsPassword = !_isPasswordVisible;
-
-        ShowPasswordButton.Text =
-            _isPasswordVisible ? "Скрыть" : "Показать";
-    }
-
-    private async void OnEditClicked(object sender, EventArgs e)
-    {
-        if (_entry == null)
-            return;
-
-        var page = new EditPasswordPage(_vaultService,this);
-
-        page.LoadEntry(_entry);
-
-        await Navigation.PushAsync(page);
-    }
-
-    private async void OnCopyPasswordClicked(object sender, EventArgs e)
-    {
-        if( _entry == null) 
-            return;
-
-        await Clipboard.SetTextAsync(_entry.Password);
-
-        await DisplayAlertAsync(
-            "Готово",
-            "Пароль скопирован в буфер обмена.",
-            "ОК");
-    }
-
-    private async void OnDeleteClicked(object sender, EventArgs e)
-    {
-        if (_entry == null)
-            return;
-
-        bool confirmed = await DisplayAlertAsync(
-            "Удаление",
-            $"Удалить запись «{_entry.Title}»?",
-            "Удалить",
-            "Отмена");
-
-        if (!confirmed)
-            return;
-
-        await _vaultService.DeleteEntryAsync(_entry);
-
-        await Navigation.PopAsync();
+        _viewModel.Refresh();
     }
 }

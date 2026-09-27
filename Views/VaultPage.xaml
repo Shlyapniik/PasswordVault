@@ -21,10 +21,10 @@
             x:Name="SearchBar"
             Grid.Row="1"
             Placeholder="Поиск..."
-            TextChanged="OnSearchTextChanged" />
+            Text="{Binding SearchText}" />
 
         <CollectionView
-            x:Name="PasswordList"
+            ItemsSource="{Binding Entries}"
             Grid.Row="2">
 
             <CollectionView.ItemTemplate>
@@ -37,7 +37,10 @@
 
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer
-                                Tapped="OnPasswordTapped" />
+                                Command="{Binding Source={
+                                    RelativeSource AncestorType={x:Type ContentPage}},
+                                    Path=BindingContext.OpenEntryCommand}"
+                                CommandParameter="{Binding .}"/>
                         </Border.GestureRecognizers>
 
                         <VerticalStackLayout>
@@ -67,11 +70,11 @@
         <Button
             Grid.Row="3"
             Text="+ Добавить пароль"
-            Clicked="OnAddPasswordClicked"/>
+            Command="{Binding AddEntryCommand}"/>
 
         <Button
             Text="Заблокировать"
-            Clicked="OnLockClicked"/>
+            Command="{Binding LockCommand}"/>
 
     </Grid>
 

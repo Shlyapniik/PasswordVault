@@ -1,86 +1,14 @@
-using PasswordVault.Models;
-using PasswordVault.Services;
+using PasswordVault.ViewModels;
 
 namespace PasswordVault.Views;
 
 public partial class AddPasswordPage : ContentPage
 {
-    private readonly VaultService _vaultService;
-    private readonly PasswordGeneratorService _passwordGenerator;
-
-    public AddPasswordPage(VaultService vaultService, PasswordGeneratorService passwordGenerator)
+    public AddPasswordPage(
+        AddPasswordViewModel viewModel)
     {
         InitializeComponent();
 
-        _vaultService = vaultService;
-        _passwordGenerator = passwordGenerator;
-    }
-
-    private async void OnGeneratePasswordClicked(object sender, EventArgs e)
-    {
-        int length = (int)PasswordLengthStepper.Value;
-
-        bool useLowercase = UseLowercaseCheckBox.IsChecked;
-        bool useUppercase = UseUppercaseCheckBox.IsChecked;
-        bool useDigits = UseDigitsCheckBox.IsChecked;
-        bool useSymbols = UseSymbolsCheckBox.IsChecked;
-
-        try
-        {
-            PasswordEntry.Text = _passwordGenerator.Generate(
-                length,
-                useLowercase,
-                useUppercase,
-                useDigits,
-                useSymbols);
-        }
-        catch (ArgumentException ex)
-        {
-            await DisplayAlertAsync(
-                "Ошибка",
-                ex.Message,
-                "ОК");
-        }
-    }
-
-    private void OnPasswordLengthChanged(object sender, ValueChangedEventArgs e)
-    {
-        PasswordLengthLabel.Text = ((int)e.NewValue).ToString();
-    }
-
-    private async void OnSaveClicked(object sender, EventArgs e)
-    {
-        if (string.IsNullOrWhiteSpace(TitleEntry.Text))
-        {
-            await DisplayAlertAsync(
-                "Ошибка",
-                "Введите название записи.",
-                "OK");
-
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(PasswordEntry.Text))
-        {
-            await DisplayAlertAsync(
-                "Ошибка",
-                "Введите пароль.",
-                "OK");
-
-            return;
-        }
-
-        var entry = new PasswordEntry
-        {
-            Title = TitleEntry.Text,
-            Username = UsernameEntry.Text ?? string.Empty,
-            Password = PasswordEntry.Text,
-            Website = WebsiteEntry.Text ?? string.Empty,
-            Notes = NotesEditor.Text ?? string.Empty
-        };
-
-        await _vaultService.AddEntryAsync(entry);
-
-        await Shell.Current.GoToAsync("..");
+        BindingContext = viewModel;
     }
 }
