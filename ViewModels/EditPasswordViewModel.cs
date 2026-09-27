@@ -33,6 +33,18 @@ public partial class EditPasswordViewModel : ObservableObject
     [ObservableProperty]
     private double passwordLength = 16;
 
+    [ObservableProperty]
+    private bool useLowercase = true;
+
+    [ObservableProperty]
+    private bool useUppercase = true;
+
+    [ObservableProperty]
+    private bool useDigits = true;
+
+    [ObservableProperty]
+    private bool useSpecial = true;
+
     public EditPasswordViewModel(
         VaultService vaultService,
         PasswordGeneratorService passwordGeneratorService)
@@ -92,9 +104,23 @@ public partial class EditPasswordViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void GeneratePassword()
+    private async Task GeneratePassword()
     {
-        Password = _passwordGeneratorService.Generate(
-            (int)PasswordLength);
+        try
+        {
+            Password = _passwordGeneratorService.Generate(
+                (int)PasswordLength,
+                UseLowercase,
+                UseUppercase,
+                UseDigits,
+                UseSpecial);
+        }
+        catch (ArgumentException ex)
+        {
+            await Shell.Current.DisplayAlertAsync(
+                "Не удалось создать пароль",
+                ex.Message,
+                "OK");
+        }
     }
 }

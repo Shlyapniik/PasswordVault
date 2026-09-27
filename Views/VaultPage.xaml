@@ -11,54 +11,123 @@
         RowDefinitions="Auto, Auto, *, Auto"
         RowSpacing="15">
 
-        <Label
+        <!-- Заголовок -->
+        <Grid
             Grid.Row="0"
-            Text="Password Vault"
-            FontSize="28"
-            FontAttributes="Bold" />
+            ColumnDefinitions="*, Auto"
+            ColumnSpacing="10">
 
+            <VerticalStackLayout
+                Spacing="2">
+
+                <Label
+                    Text="Password Vault"
+                    FontSize="28"
+                    FontAttributes="Bold" />
+
+                <Label
+                    Text="Ваши сохранённые пароли"
+                    FontSize="14"
+                    TextColor="{StaticResource Gray500}" />
+
+            </VerticalStackLayout>
+
+            <Button
+                Grid.Column="1"
+                Text="Заблокировать"
+                Command="{Binding LockCommand}"
+                FontSize="13"
+                Padding="12,8" />
+
+        </Grid>
+
+        <!-- Поиск -->
         <SearchBar
-            x:Name="SearchBar"
             Grid.Row="1"
-            Placeholder="Поиск..."
+            Placeholder="Поиск записей..."
             Text="{Binding SearchText}" />
 
+        <!-- Список -->
         <CollectionView
+            Grid.Row="2"
             ItemsSource="{Binding Entries}"
-            Grid.Row="2">
+            SelectionMode="None">
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    Spacing="8">
+
+                    <Label
+                        Text="Записей пока нет"
+                        FontSize="20"
+                        FontAttributes="Bold"
+                        HorizontalTextAlignment="Center" />
+
+                    <Label
+                        Text="Добавьте свой первый пароль"
+                        FontSize="14"
+                        TextColor="{StaticResource Gray500}"
+                        HorizontalTextAlignment="Center" />
+
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
 
             <CollectionView.ItemTemplate>
                 <DataTemplate>
 
                     <Border
-                        Padding="15"
-                        Margin="0,5"
-                        StrokeThickness="1">
+                        Padding="16"
+                        Margin="0,4"
+                        Stroke="{StaticResource Gray200}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 12">
 
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer
-                                Command="{Binding Source={
-                                    RelativeSource AncestorType={x:Type ContentPage}},
-                                    Path=BindingContext.OpenEntryCommand}"
-                                CommandParameter="{Binding .}"/>
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenEntryCommand}"
+                                CommandParameter="{Binding .}" />
                         </Border.GestureRecognizers>
 
-                        <VerticalStackLayout>
+                        <Grid
+                            ColumnDefinitions="*, Auto"
+                            RowDefinitions="Auto, Auto, Auto"
+                            ColumnSpacing="10"
+                            RowSpacing="4">
 
                             <Label
+                                Grid.Row="0"
+                                Grid.Column="0"
                                 Text="{Binding Title}"
                                 FontSize="18"
                                 FontAttributes="Bold" />
 
                             <Label
-                                Text="{Binding Website}"
-                                FontSize="14" />
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Text="{Binding Username}"
+                                FontSize="14"
+                                TextColor="{StaticResource Gray500}"
+                                LineBreakMode="TailTruncation" />
 
                             <Label
-                                Text="{Binding Username}"
-                                FontSize="14" />
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Text="{Binding Website}"
+                                FontSize="12"
+                                TextColor="{StaticResource Gray400}"
+                                LineBreakMode="TailTruncation" />
 
-                        </VerticalStackLayout>
+                            <Label
+                                Grid.Row="0"
+                                Grid.RowSpan="3"
+                                Grid.Column="1"
+                                Text="›"
+                                FontSize="28"
+                                TextColor="{StaticResource Primary}"
+                                VerticalOptions="Center" />
+                        </Grid>
 
                     </Border>
 
@@ -67,14 +136,14 @@
 
         </CollectionView>
 
+        <!-- Добавление -->
         <Button
             Grid.Row="3"
             Text="+ Добавить пароль"
-            Command="{Binding AddEntryCommand}"/>
-
-        <Button
-            Text="Заблокировать"
-            Command="{Binding LockCommand}"/>
+            Command="{Binding AddEntryCommand}"
+            FontSize="16"
+            FontAttributes="Bold"
+            HeightRequest="52" />
 
     </Grid>
 

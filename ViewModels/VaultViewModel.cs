@@ -35,6 +35,8 @@ public partial class VaultViewModel : ObservableObject
     [RelayCommand]
     public async Task LoadAsync()
     {
+        SearchText = string.Empty;
+
         _allEntries = await _vaultService.GetEntriesAsync();
 
         ApplyFilter();

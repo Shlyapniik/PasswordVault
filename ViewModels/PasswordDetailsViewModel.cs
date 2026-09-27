@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using PasswordVault.Models;
 using PasswordVault.Services;
 using PasswordVault.Views;
+using CommunityToolkit.Maui.Alerts;
 
 namespace PasswordVault.ViewModels;
 
@@ -72,6 +73,11 @@ public partial class PasswordDetailsViewModel : ObservableObject
             return;
 
         await Clipboard.Default.SetTextAsync(Password);
+
+        await Snackbar.Make(
+            "Пароль скопирован",
+            duration: TimeSpan.FromSeconds(2))
+            .Show();
     }
 
     [RelayCommand]

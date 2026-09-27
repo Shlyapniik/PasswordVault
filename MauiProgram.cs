@@ -4,6 +4,7 @@ using PasswordVault.Security;
 using PasswordVault.Services;
 using PasswordVault.ViewModels;
 using PasswordVault.Views;
+using CommunityToolkit.Maui;
 
 namespace PasswordVault
 {
@@ -14,6 +15,7 @@ namespace PasswordVault
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
